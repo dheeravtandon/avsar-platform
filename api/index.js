@@ -11,6 +11,17 @@ import { get } from '../server/src/db/index.js';
  * deterministic demo dataset used locally (server/src/db/seed.js), so a live
  * demo always opens on a complete, coherent lifecycle rather than a blank one.
  *
+ * Named api/index.js rather than a bracket catch-all: routing here relies on
+ * the explicit rewrite in vercel.json ("/api/(.*)" -> "/api"), which is the
+ * documented, battle-tested pattern for a plain Express app on Vercel. A
+ * filesystem catch-all (api/[...path].js) turned out NOT to route requests
+ * with more than one path segment on a project with framework: null - single
+ * segment paths like /api/health worked, but /api/auth/login and
+ * /api/dashboard/public hit Vercel's own 404 before ever reaching the
+ * function. A rewrite preserves the original request path, so Express still
+ * sees the full URL (e.g. /api/auth/login) via req.url and its own route
+ * table continues to work unchanged.
+ *
  * The Express app is exported (indirectly, via this handler) rather than
  * having its own .listen(): an Express app is itself callable as (req, res),
  * which is exactly the handler signature Vercel's Node runtime expects.
