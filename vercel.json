@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build --workspace client",
+  "outputDirectory": "client/dist",
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}

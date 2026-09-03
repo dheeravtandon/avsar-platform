@@ -9,7 +9,10 @@ export const config = {
   env: process.env.NODE_ENV || 'development',
   jwtSecret: process.env.JWT_SECRET || 'avsar-dev-secret-do-not-use-in-production',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',
-  dbFile: process.env.DB_FILE || './data/avsar.db',
+  // Vercel's serverless filesystem is read-only except /tmp, and /tmp is wiped
+  // between cold starts - which is fine here since the app reseeds on an empty
+  // database (see api/[...path].js). VERCEL is set by the platform itself.
+  dbFile: process.env.DB_FILE || (process.env.VERCEL ? '/tmp/avsar.db' : './data/avsar.db'),
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   auditRetentionDays: int(process.env.AUDIT_RETENTION_DAYS, 180),
 };

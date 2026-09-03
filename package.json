@@ -9,7 +9,7 @@
     "client"
   ],
   "engines": {
-    "node": ">=22.5.0"
+    "node": "22.x"
   },
   "scripts": {
     "install:all": "npm install",
@@ -23,5 +23,6 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
-  }
+  },
+  "type": "module"
 }
