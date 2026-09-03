@@ -24,7 +24,9 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const serverDir = path.resolve(here, '..');
 const PORT = 4123;
 const BASE = `http://localhost:${PORT}/api`;
-const DB = path.join(serverDir, 'data', 'test.db');
+// A unique file per run: on Windows a killed child can hold the handle briefly,
+// so reusing one name makes the suite fail to start rather than fail a test.
+const DB = path.join(serverDir, 'data', `test-${process.pid}.db`);
 const PASSWORD = 'Avsar@2026';
 
 const env = { ...process.env, API_PORT: String(PORT), DB_FILE: DB, NODE_ENV: 'test', JWT_SECRET: 'test-secret' };
@@ -85,11 +87,6 @@ const run = (cmd, args) => new Promise((resolve, reject) => {
 
 let server;
 try {
-  for (const suffix of ['', '-wal', '-shm']) {
-    const f = `${DB}${suffix}`;
-    if (fs.existsSync(f)) fs.rmSync(f);
-  }
-
   console.log('\nSeeding a throwaway database...');
   await run('node', ['src/db/seed.js']);
 
