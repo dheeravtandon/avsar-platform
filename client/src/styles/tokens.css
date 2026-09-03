@@ -1,0 +1,110 @@
+/* AVSAR design tokens
+   ------------------------------------------------------------------
+   One source of truth for colour, type, spacing and elevation. Nothing
+   in the application sets a raw hex value; everything resolves through
+   these variables so the whole surface can be re-themed for a state
+   government without touching a component.                          */
+
+:root {
+  /* Ink and paper -------------------------------------------------- */
+  --ink-900: #101828;
+  --ink-800: #1d2939;
+  --ink-700: #344054;
+  --ink-600: #475467;
+  --ink-500: #667085;
+  --ink-400: #98a2b3;
+  --ink-300: #d0d5dd;
+  --ink-200: #e4e7ec;
+  --ink-100: #f2f4f7;
+  --ink-050: #f9fafb;
+
+  --paper: #ffffff;
+  --paper-sunken: #f7f7f5;
+  --paper-raised: #ffffff;
+
+  /* Primary - a deep administrative navy, not a product blue ------- */
+  --brand-900: #06172e;
+  --brand-800: #0b2447;
+  --brand-700: #123059;
+  --brand-600: #19406f;
+  --brand-500: #22548c;
+  --brand-300: #8fb0d4;
+  --brand-100: #dee8f4;
+  --brand-050: #f0f5fb;
+
+  /* Accent - Ashoka chakra blue, used sparingly for emphasis ------- */
+  --accent-600: #05639e;
+  --accent-500: #0a7ac2;
+  --accent-100: #ddeefa;
+
+  /* Secondary - saffron, reserved for the pilot / sandbox stage ---- */
+  --saffron-700: #9a4f06;
+  --saffron-600: #c26a0d;
+  --saffron-500: #e08a1e;
+  --saffron-100: #fdf0dc;
+
+  /* Semantic ------------------------------------------------------- */
+  --green-700: #05603a;
+  --green-600: #067647;
+  --green-100: #dcfae6;
+  --amber-700: #93370d;
+  --amber-600: #b54708;
+  --amber-100: #fef0c7;
+  --red-700: #912018;
+  --red-600: #b42318;
+  --red-100: #fee4e2;
+  --violet-700: #4a1fb8;
+  --violet-100: #ece9fe;
+  --teal-700: #125d56;
+  --teal-100: #ccfbef;
+
+  /* Typography ------------------------------------------------------ */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --text-2xs: 0.6875rem;  /* 11px - table meta, chips */
+  --text-xs: 0.75rem;     /* 12px - labels */
+  --text-sm: 0.8125rem;   /* 13px - dense table body */
+  --text-base: 0.875rem;  /* 14px - body */
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+
+  /* Spacing - 4px scale -------------------------------------------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+
+  /* Radius and lines ------------------------------------------------ */
+  --r-xs: 3px;
+  --r-sm: 5px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-full: 999px;
+  --line: 1px solid var(--ink-200);
+  --line-strong: 1px solid var(--ink-300);
+
+  /* Elevation - restrained; this is a records system, not a phone app */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.04);
+  --shadow-lg: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03);
+
+  /* Layout ---------------------------------------------------------- */
+  --sidebar-w: 244px;
+  --topbar-h: 56px;
+  --page-max: 1360px;
+  --reading-max: 68ch;
+}
