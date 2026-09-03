@@ -149,9 +149,9 @@ Failing is a permitted outcome — that is what makes it a sandbox.
 | Production build time | ~4 seconds |
 | Runtime dependencies | 5 server (`express`, `cors`, `jsonwebtoken`, `bcryptjs`, `zod`, plus `dotenv`), 4 client |
 | Native/compiled dependencies | **zero** |
-| Database tables | 16 |
-| API endpoints | 46 |
-| React routes | 24 (8 public, 16 authenticated) |
+| Database tables | 17 |
+| API endpoints | 62 |
+| React routes | 31 (10 public, 21 authenticated) |
 | End-to-end tests | 32, all passing |
 
 ## 6. Running it
@@ -199,7 +199,7 @@ avsar/
 │  │  ├─ index.js               App bootstrap, route mounting, health endpoint
 │  │  ├─ config.js              Env config + POLICY constants (statutory limits, one place)
 │  │  ├─ db/
-│  │  │  ├─ schema.sql          16 tables, portable SQL
+│  │  │  ├─ schema.sql          17 tables, portable SQL
 │  │  │  ├─ index.js            node:sqlite connection, query helpers, transactions
 │  │  │  └─ seed.js             Deterministic demo dataset
 │  │  ├─ middleware/            auth.js (JWT + RBAC), error.js (Zod → 422, async wrap)
@@ -211,14 +211,14 @@ avsar/
 │  │  │  ├─ audit.js            Hash-chained log + chain verification
 │  │  │  ├─ ids.js              AVS/CH/2026/0001 file numbering
 │  │  │  └─ notify.js           In-app notifications
-│  │  └─ routes/                11 route modules (46 endpoints)
+│  │  └─ routes/                11 route modules (62 endpoints)
 │  └─ test/workflow.test.mjs    32-assertion end-to-end lifecycle suite
 ├─ client/                      React 18 + Vite
 │  └─ src/
 │     ├─ styles/                tokens.css · base.css · components.css
 │     ├─ lib/                   api.js (endpoint map) · auth.jsx · hooks.js · format.js · status.js
 │     ├─ components/            AppShell · PublicShell · ui.jsx · Stepper · Icons · ErrorBoundary
-│     └─ pages/                 24 routes
+│     └─ pages/                 27 modules over 31 routes
 └─ docs/                        Project document set (see below)
 ```
 

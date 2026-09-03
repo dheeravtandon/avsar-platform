@@ -22,7 +22,7 @@ ROWS = [
     # ----------------------------------------------------------- server
     ("server/src/index.js", "API", "Express bootstrap: CORS, JSON body limit, request log, health endpoint, mounts eleven route modules, error handlers last.", "GET /api/health", "users", "NF-015", "SDD 6.2", "Complete"),
     ("server/src/config.js", "Config", "Environment configuration and the POLICY block: every statutory limit declared once with the rule it derives from.", "-", "-", "NF-010, FR-002", "SDD 8.13", "Complete"),
-    ("server/src/db/schema.sql", "Data", "Sixteen tables in portable SQL with foreign keys, unique constraints and indexes.", "-", "all", "NF-004, FR-018", "SDD 7", "Complete"),
+    ("server/src/db/schema.sql", "Data", "Seventeen tables in portable SQL with foreign keys, unique constraints and indexes.", "-", "all", "NF-004, FR-018", "SDD 7", "Complete"),
     ("server/src/db/index.js", "Data", "node:sqlite connection, WAL mode, foreign keys on, query helpers, insert/update builders, transaction wrapper, bind normalisation.", "-", "all", "NF-003, NF-013, SR-007", "SDD 7.4", "Complete"),
     ("server/src/db/seed.js", "Data", "Deterministic demo dataset: 7 departments, 32 users, 12 startups, 8 problem statements, 13 applications, 19 evaluations, 2 pilots, 1 contract, 1 listing.", "npm run seed", "all", "-", "SDD 12.2", "Complete"),
 
@@ -56,7 +56,7 @@ ROWS = [
     ("client/src/styles/tokens.css", "Client", "The whole design system: ink and paper scales, brand navy, Ashoka accent, saffron, semantic colours, type scale, 4px spacing scale, radius, elevation, layout constants.", "-", "-", "NF-011", "SDD 10.4", "Complete"),
     ("client/src/styles/base.css", "Client", "Reset, typography, focus-visible policy, skip link, screen-reader utility, reduced-motion block, layout utilities.", "-", "-", "NF-005, NF-007", "SDD 10.3", "Complete"),
     ("client/src/styles/components.css", "Client", "Component layer: shell, sidebar, topbar, cards, tiles, dense tables, chips, buttons, forms, stepper, timeline, modal, drawer, tabs, toasts, public site, auth split, print rules.", "-", "-", "NF-011", "SDD 10.4", "Complete"),
-    ("client/src/lib/api.js", "Client", "Single fetch client with token handling and 401 recovery, typed error with field errors, and the endpoint map so no URL string lives in a component.", "46 endpoints", "-", "NF-009", "SDD 10.8", "Complete"),
+    ("client/src/lib/api.js", "Client", "Single fetch client with token handling and 401 recovery, typed error with field errors, and the endpoint map so no URL string lives in a component.", "62 endpoints", "-", "NF-009", "SDD 10.8", "Complete"),
     ("client/src/lib/auth.jsx", "Client", "Auth context: sign-in, startup registration, session restore, sign-out, and the role predicate hook used by every guard.", "-", "-", "SR-004", "SDD 10.8", "Complete"),
     ("client/src/lib/hooks.js", "Client", "useApi with cancellation and reload, debounce, document title, dismiss-on-escape-or-outside-click.", "-", "-", "NF-001", "SDD 10.8", "Complete"),
     ("client/src/lib/format.js", "Client", "Indian-numbering currency, tabular numbers, dates, relative time, initials, title case, truncation.", "-", "-", "-", "SDD 10.4", "Complete"),

@@ -14,8 +14,8 @@ def build(path):
         "Design Ref column of AVSAR-RTM-004 and from the Code Register AVSAR-CDR-006, so a "
         "requirement can be traced to the design that satisfies it and to the file that implements "
         "it. Section 8 covers the mechanism, section 9 the controls, section 10 quality attributes.",
-        [["1.0", "03 Sep 2026", "TandSol", "Baseline. Sixteen-table data model, four state "
-          "machines, seven roles, forty-six endpoints, twenty-four client routes."]],
+        [["1.0", "03 Sep 2026", "TandSol", "Baseline. Seventeen-table data model, four state "
+          "machines, seven roles, sixty-two endpoints, thirty-one client routes."]],
     )
 
     # ------------------------------------------------------------- 1 to 5
@@ -98,7 +98,7 @@ def build(path):
     # ------------------------------------------------------------------ 7
     doc.add_heading("7. Data model", level=1)
     doc.add_paragraph(
-        "Sixteen tables. Foreign keys are enforced, write-ahead logging is on, and every JSON-valued "
+        "Seventeen tables. Foreign keys are enforced, write-ahead logging is on, and every JSON-valued "
         "column is documented in the schema comment beside it."
     )
     doc.add_heading("7.1 Identity and organisation", level=2)
@@ -451,7 +451,7 @@ def build(path):
 
     doc.add_heading("10.8 Client structure", level=2)
     doc.add_paragraph(
-        "Twenty-four routes, eight public and sixteen authenticated, guarded by a role-aware wrapper "
+        "Thirty-one routes, ten public and twenty-one authenticated, guarded by a role-aware wrapper "
         "that redirects rather than rendering a forbidden view. All endpoint URLs live in one map so "
         "no component contains a URL string. Navigation is derived from the role predicate, so a "
         "user never sees a link to something the server would refuse."

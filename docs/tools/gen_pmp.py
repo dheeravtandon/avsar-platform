@@ -39,7 +39,7 @@ def build(path):
          "route handlers are written. A state machine discovered incrementally through handlers is "
          "a state machine nobody can review."),
         ("Design system before screens.", "The token and component layer is built alongside the API "
-         "so that no screen is ever blocked on styling decisions, and so that twenty-four routes "
+         "so that no screen is ever blocked on styling decisions, and so that thirty-one routes "
          "look like one product rather than twenty-four."),
     ])
 
@@ -107,7 +107,7 @@ def build(path):
         ["Workflow", "Assertion that a legal transition succeeds and an illegal one returns 409", "All four state machines"],
         ["Authorisation", "Cross-role assertion that a forbidden call returns 403", "Publication authority, sanction authority, cross-department reads"],
         ["Integrity", "Full-chain audit verification after a complete lifecycle run", "Every state change written during the run"],
-        ["Client", "Manual pass per role against a live API", "All twenty-four routes"],
+        ["Client", "Manual pass per role against a live API", "All thirty-one routes"],
         ["Build", "Production build as a compile check across every module", "872 modules"],
         ["Accessibility", "Keyboard traversal, contrast check, screen-reader review", "Public site and all seven workspaces"],
     ], widths=[1.2, 2.6, 2.9])

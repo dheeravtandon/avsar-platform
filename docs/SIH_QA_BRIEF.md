@@ -127,7 +127,7 @@ platform is **27 kB of CSS (6.3 kB gzipped)** and re-themes for a state governme
 charts do not block first paint. Production build takes about 4 seconds.
 
 **Q. How many endpoints / tables / routes?**
-46 API endpoints across 11 route modules, 16 database tables, 24 React routes (8 public, 16 authenticated).
+62 API endpoints across 11 route modules, 17 database tables, 31 React routes (10 public, 21 authenticated) served by 27 page modules.
 
 **Q. Walk me through a request.**
 1. A React route calls the typed endpoint map in `lib/api.js` — no URL strings live in components.
@@ -304,9 +304,9 @@ form. Everything else is integration work; that one changes how much the evidenc
 | Payment window | 45 days (MSMED Act s.15) |
 | Grievance SLA | 15 days |
 | Audit log retention | 180 days (CERT-In) |
-| Database tables | 16 |
-| API endpoints | 46 |
-| React routes | 24 |
+| Database tables | 17 |
+| API endpoints | 62 |
+| React routes | 31 |
 | E2E assertions | 32, all passing |
 | Native dependencies | zero |
 
