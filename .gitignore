@@ -14,3 +14,4 @@ Thumbs.db
 .vite/
 coverage/
 uploads/
+server/data/test.db*

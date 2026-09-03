@@ -17,5 +17,15 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Charting is the heaviest dependency and is not needed on the first
+        // paint of most routes, so it is split out from the app bundle.
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          charts: ['recharts'],
+        },
+      },
+    },
   },
 });

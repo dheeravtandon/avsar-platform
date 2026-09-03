@@ -184,7 +184,7 @@ const challenges = [
     trlMin: 6, budget: 48 * L, months: 6, scaleValue: 11 * CR, scaleUnits: '9 remaining zones',
     env: 'Field deployment on live distribution mains; no public internet at valve chambers.',
     data: 'Two years of billing data, GIS network layer, reservoir SCADA history.',
-    status: 'PROCURED',
+    status: 'PROCURED', publishedDaysAgo: 250,
   },
   {
     dept: 'MORTH-NH', owner: 'nodal.nh@avsar.gov.in', head: 'head.nh@avsar.gov.in',
@@ -203,7 +203,7 @@ const challenges = [
     trlMin: 6, budget: 65 * L, months: 5, scaleValue: 22 * CR, scaleUnits: '18,000 km network',
     env: 'Survey vehicle at 60-80 km/h in live traffic; output to the existing HMS.',
     data: 'Historic condition surveys, chainage-referenced GIS, maintenance ledger.',
-    status: 'PILOT',
+    status: 'PILOT', publishedDaysAgo: 150,
   },
   {
     dept: 'MOHFW-NHM', owner: 'nodal.nhm@avsar.gov.in', head: 'head.nhm@avsar.gov.in',
@@ -222,7 +222,7 @@ const challenges = [
     trlMin: 5, budget: 55 * L, months: 6, scaleValue: 16 * CR, scaleUnits: '740 districts',
     env: 'District hospital OPD, intermittent connectivity, ABDM sandbox integration.',
     data: 'De-identified case sheet images, ICD-10 mapping tables, ABDM API sandbox.',
-    status: 'EVALUATION',
+    status: 'EVALUATION', publishedDaysAgo: 80,
   },
   {
     dept: 'DL-TRAFFIC', owner: 'nodal.traffic@avsar.gov.in', head: null,
@@ -241,7 +241,7 @@ const challenges = [
     trlMin: 6, budget: 42 * L, months: 4, scaleValue: 8 * CR, scaleUnits: '340 junctions',
     env: 'Existing police IP camera network, on-premise inference, no cloud egress of footage.',
     data: '90 days of retained footage at four representative junctions, historical challan outcomes.',
-    status: 'PUBLISHED',
+    status: 'PUBLISHED', publishedDaysAgo: 25,
   },
   {
     dept: 'MOA-KRISHI', owner: 'nodal.krishi@avsar.gov.in', head: null,
@@ -260,7 +260,7 @@ const challenges = [
     trlMin: 5, budget: 38 * L, months: 6, scaleValue: 14 * CR, scaleUnits: '12 more districts',
     env: 'Delivery over IVR and WhatsApp in two languages; integration with the Agristack registry.',
     data: 'Agristack plot geometry, IMD weather grids, four seasons of yield records.',
-    status: 'PUBLISHED',
+    status: 'PUBLISHED', publishedDaysAgo: 20,
   },
   {
     dept: 'MH-MSEDCL', owner: 'nodal.msedcl@avsar.gov.in', head: null,
@@ -279,7 +279,7 @@ const challenges = [
     trlMin: 6, budget: 52 * L, months: 5, scaleValue: 19 * CR, scaleUnits: '2,400 feeders',
     env: 'Read-only integration with the existing MDM and billing system.',
     data: '36 months of consumer billing, feeder-head AMI reads, DT master.',
-    status: 'PUBLISHED',
+    status: 'PUBLISHED', publishedDaysAgo: 14,
   },
   {
     dept: 'MOHUA-SCM', owner: 'nodal.scm@avsar.gov.in', head: 'head.scm@avsar.gov.in',
@@ -347,9 +347,9 @@ challenges.forEach((c, i) => {
     ip_terms: 'STARTUP_RETAINS',
     status: c.status,
     approved_by: published && c.head ? userIds[c.head] : null,
-    published_at: published ? daysAgo(90 - i * 6) : null,
+    published_at: published ? daysAgo(c.publishedDaysAgo) : null,
     closes_at: published ? daysAhead(30 - i * 2) : null,
-    created_at: daysAgo(110 - i * 6),
+    created_at: daysAgo((c.publishedDaysAgo ?? 20) + 18),
   });
   chIds.push(id);
 });
@@ -463,8 +463,10 @@ applications.forEach((a, i) => {
     eligibility_snapshot: JSON.stringify({ eligibility, match, evaluatedAt: new Date().toISOString() }),
     match_score: match.score,
     status: a.status,
-    submitted_at: daysAgo(70 - i * 3),
-    created_at: daysAgo(72 - i * 3),
+    // Submitted a fortnight after the problem statement went live, so the
+    // published-to-application cycle time on the dashboard is meaningful.
+    submitted_at: addDays(challenge.published_at ?? daysAgo(30), 14 + (i % 4)),
+    created_at: addDays(challenge.published_at ?? daysAgo(32), 11 + (i % 4)),
   });
   appIds.push(id);
 });
@@ -587,7 +589,7 @@ for (const p of pilotSpecs) {
     verdict: p.verdict,
     verdict_note: p.verdictNote,
     verdict_at: p.verdict ? daysAgo(18) : null,
-    created_at: p.start,
+    created_at: addDays(app.submitted_at, 21),
   });
   pilotIds[p.code] = pid;
 

@@ -1,6 +1,5 @@
 import {
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell,
-  FunnelChart, Funnel, LabelList, PieChart, Pie, Legend,
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, Legend,
 } from 'recharts';
 import PublicShell from '../components/PublicShell.jsx';
 import { useApi, useDocumentTitle } from '../lib/hooks.js';
@@ -14,8 +13,8 @@ export default function PublicDashboard() {
   useDocumentTitle('Transparency board');
   const { data, loading, error, reload } = useApi(endpoints.publicDashboard(), []);
 
-  if (loading) return <PublicShell><div className="page"><Loading rows={6} /></div></PublicShell>;
-  if (error) return <PublicShell><div className="page"><ErrorState error={error} onRetry={reload} /></div></PublicShell>;
+  if (loading || (!data && !error)) return <PublicShell><div className="page"><Loading rows={6} /></div></PublicShell>;
+  if (error || !data) return <PublicShell><div className="page"><ErrorState error={error} onRetry={reload} /></div></PublicShell>;
 
   const { headline: h, funnel, conversion, bySector, byDepartment, cycleTime, payments, provenSolutions } = data;
 
