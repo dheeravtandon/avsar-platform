@@ -70,8 +70,8 @@ export function checkEligibility(startup, asOf = new Date()) {
     label: 'Not formed by splitting up or reconstruction of an existing business',
     authority: 'DPIIT G.S.R. 127(E), para 1(iv)',
     required: true,
-    pass: Number(startup.is_split_reconstruction) === 0,
-    detail: Number(startup.is_split_reconstruction) === 0 ? 'Self-declared clean' : 'Declared as reconstruction',
+    pass: Number(startup.is_split_reconstruction || 0) === 0,
+    detail: Number(startup.is_split_reconstruction || 0) === 0 ? 'Self-declared clean' : 'Declared as reconstruction',
   });
 
   checks.push({

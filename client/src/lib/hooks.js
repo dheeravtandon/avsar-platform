@@ -9,7 +9,12 @@ export function useApi(path, deps = [], { skip = false } = {}) {
   const [nonce, setNonce] = useState(0);
   const mounted = useRef(true);
 
-  useEffect(() => () => { mounted.current = false; }, []);
+  // Set true on every mount: React StrictMode mounts, unmounts and remounts in
+  // development, and a cleanup-only ref would stay false after the remount.
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   useEffect(() => {
     if (skip || !path) { setLoading(false); return undefined; }

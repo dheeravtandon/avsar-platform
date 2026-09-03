@@ -153,6 +153,7 @@ startups.forEach((s, i) => {
     women_led: womenLed,
     turnover_last_fy: turnover,
     has_prior_govt_order: priorOrder,
+    is_split_reconstruction: 0,
     kyc_status: 'VERIFIED',
     kyc_verified_at: new Date().toISOString(),
     profile_completeness: 100,

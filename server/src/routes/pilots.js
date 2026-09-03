@@ -372,8 +372,11 @@ export function hydrate(row) {
   };
 }
 
+/** Parse a JSON text column. Values already parsed upstream pass through. */
 function safeJson(v, fallback) {
-  try { return JSON.parse(v ?? 'null') ?? fallback; } catch { return fallback; }
+  if (v === null || v === undefined) return fallback;
+  if (typeof v === 'object') return v;
+  try { return JSON.parse(v) ?? fallback; } catch { return fallback; }
 }
 
 export default router;

@@ -14,7 +14,7 @@ const MAP = {
   EVALUATION: ['violet', 'Under evaluation'],
   PILOT: ['pilot', 'In pilot'],
   PROCURED: ['success', 'Procured'],
-  REJECTED: ['danger', 'Returned'],
+  REJECTED: ['danger', 'Not taken forward'],
   ARCHIVED: ['neutral', 'Archived'],
 
   // Application
@@ -72,12 +72,23 @@ const MAP = {
   SUSPENDED_USER: ['danger', 'Suspended'],
 };
 
+/**
+ * A few codes read differently depending on what they are attached to.
+ * REJECTED on a challenge means the head sent it back; on an application it
+ * means the committee did not take it forward.
+ */
+const CONTEXT_OVERRIDES = {
+  challenge: { REJECTED: 'Returned by head' },
+  application: { REJECTED: 'Not taken forward' },
+  pilot: { CLOSED: 'Closed' },
+};
+
 export function statusTone(code) {
   return MAP[code]?.[0] ?? 'neutral';
 }
 
-export function statusLabel(code) {
-  return MAP[code]?.[1] ?? titleCase(code || '');
+export function statusLabel(code, context) {
+  return CONTEXT_OVERRIDES[context]?.[code] ?? MAP[code]?.[1] ?? titleCase(code || '');
 }
 
 /** Which of the five AVSAR stages a status belongs to. */

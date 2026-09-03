@@ -130,9 +130,10 @@ router.get('/me', authenticate, wrap(async (req, res) => {
       role === ROLES.ADMIN ? [] : [dept],
     ),
     funnel: all(
-      `SELECT status, COUNT(*) AS count FROM applications a
-       ${role === ROLES.ADMIN ? '' : 'JOIN challenges c ON c.id = a.challenge_id WHERE c.dept_id = ?'}
-       GROUP BY status`,
+      `SELECT a.status AS status, COUNT(*) AS count
+       FROM applications a JOIN challenges c ON c.id = a.challenge_id
+       ${role === ROLES.ADMIN ? '' : 'WHERE c.dept_id = ?'}
+       GROUP BY a.status ORDER BY count DESC`,
       role === ROLES.ADMIN ? [] : [dept],
     ),
   });

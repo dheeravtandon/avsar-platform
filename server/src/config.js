@@ -3,7 +3,9 @@ import 'dotenv/config';
 const int = (v, d) => (Number.isFinite(Number(v)) ? Number(v) : d);
 
 export const config = {
-  port: int(process.env.PORT, 4000),
+  // API_PORT wins so a host-injected PORT (used by the web dev server) cannot
+  // collide with the API. Falls back to PORT for PaaS deployments.
+  port: int(process.env.API_PORT ?? process.env.PORT, 4000),
   env: process.env.NODE_ENV || 'development',
   jwtSecret: process.env.JWT_SECRET || 'avsar-dev-secret-do-not-use-in-production',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',

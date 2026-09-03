@@ -4,12 +4,12 @@ import { IconAlert, IconCheck, IconInfo, IconX } from './Icons.jsx';
 
 /* ------------------------------------------------------------------ chips */
 
-export function Status({ code, label, tone, plain = false }) {
+export function Status({ code, label, tone, context, plain = false }) {
   if (!code && !label) return <span className="muted">—</span>;
   const t = tone || statusTone(code);
   return (
     <span className={`chip chip--${t}${plain ? ' chip--plain' : ''}`}>
-      {label || statusLabel(code)}
+      {label || statusLabel(code, context)}
     </span>
   );
 }
