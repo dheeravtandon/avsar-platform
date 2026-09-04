@@ -6,6 +6,11 @@ import { wrap, httpError } from '../middleware/error.js';
 import { record } from '../services/audit.js';
 import { notifyMany } from '../services/notify.js';
 import { criteria, computeTotal, consensus, BUCKET_CAP, QUALIFYING_TECHNICAL } from '../services/scoring.js';
+import {
+  automatedRemarks,
+  runAutomatedEvaluation,
+  toCommitteeRecommendation,
+} from '../services/automatedEvaluation.js';
 
 const router = Router();
 
@@ -42,6 +47,78 @@ const scoreSchema = z.object({
   recommendation: z.enum(['RECOMMEND', 'RECOMMEND_WITH_CONDITIONS', 'NOT_RECOMMEND']),
   coiDeclared: z.boolean(),
 });
+
+const automatedScoreSchema = z.object({
+  coiDeclared: z.boolean(),
+});
+
+/**
+ * Run the evidence engine against data already held by AVSAR. The complete
+ * result and its data limitations are stored inside the existing JSON score
+ * column, so this adds no schema migration and historical committee scores
+ * remain readable.
+ */
+router.post('/:id/auto-score', authenticate, authorize(ROLES.EVALUATOR, ROLES.ADMIN), wrap(async (req, res) => {
+  const d = automatedScoreSchema.parse(req.body);
+  if (!d.coiDeclared) throw httpError(400, 'A conflict-of-interest declaration is mandatory before evaluation');
+
+  const row = get('SELECT * FROM evaluations WHERE id = ?', [Number(req.params.id)]);
+  if (!row) throw httpError(404, 'Evaluation not found');
+  if (row.evaluator_id !== req.user.id && req.user.role !== ROLES.ADMIN) throw httpError(403, 'This evaluation is assigned to another committee member');
+  if (row.status === 'SUBMITTED') throw httpError(409, 'Evaluation already submitted and locked');
+
+  const application = get('SELECT * FROM applications WHERE id = ?', [row.application_id]);
+  const startup = application && get('SELECT * FROM startups WHERE id = ?', [application.startup_id]);
+  const challenge = application && get('SELECT * FROM challenges WHERE id = ?', [application.challenge_id]);
+  if (!application || !startup || !challenge) throw httpError(409, 'Evaluation source records are incomplete');
+
+  const { result, inputBasis } = runAutomatedEvaluation({
+    application,
+    startup,
+    challenge,
+    coiDeclared: d.coiDeclared,
+  });
+  const recommendation = toCommitteeRecommendation(result.recommendation);
+  const remarks = automatedRemarks(result, inputBasis);
+  const storedScores = { evaluationMode: 'AUTOMATED', result, inputBasis };
+
+  update('evaluations', row.id, {
+    scores: JSON.stringify(storedScores),
+    total_score: result.scores.finalScore,
+    remarks,
+    recommendation,
+    coi_declared: 1,
+    status: 'SUBMITTED',
+    submitted_at: new Date().toISOString(),
+  });
+
+  record({
+    actorId: req.user.id,
+    actorRole: req.user.role,
+    action: 'EVALUATION_AUTOMATED',
+    entityType: 'applications',
+    entityId: row.application_id,
+    meta: {
+      evaluationId: row.id,
+      algorithmVersion: result.algorithmVersion,
+      finalScore: result.scores.finalScore,
+      riskLevel: result.riskLevel,
+      engineRecommendation: result.recommendation,
+      committeeRecommendation: recommendation,
+      reviewFlags: result.mandatoryReviewFlags,
+    },
+    ip: req.ip,
+  });
+
+  const peers = all('SELECT * FROM evaluations WHERE application_id = ?', [row.application_id]);
+  const agg = consensus(peers);
+  if (agg.flagged) {
+    const officers = all("SELECT id FROM users WHERE dept_id = ? AND role IN ('NODAL_OFFICER','DEPT_HEAD')", [challenge.dept_id]).map((r) => r.id);
+    notifyMany(officers, 'Score dispersion flagged', `${application.code}: committee scores differ by ${agg.spread} marks. A reconciliation sitting is required.`, `/app/applications/${row.application_id}`, 'WARNING');
+  }
+
+  res.json({ result, inputBasis, recommendation, consensus: agg });
+}));
 
 router.post('/:id/score', authenticate, authorize(ROLES.EVALUATOR, ROLES.ADMIN), wrap(async (req, res) => {
   const d = scoreSchema.parse(req.body);

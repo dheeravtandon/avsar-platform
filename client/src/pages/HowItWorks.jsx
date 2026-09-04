@@ -24,17 +24,17 @@ const FLOW = [
   },
   {
     stage: 'VALIDATE', letter: 'V', title: 'Validate — eligibility, then merit',
-    owner: 'Platform (automatic gate), then the Evaluation Committee',
+    owner: 'Platform evidence engine, initiated by an authorised evaluator',
     duration: '15–25 working days',
     steps: [
       ['Startup applies', 'Solution summary, approach, claimed TRL, quoted pilot cost, timeline, differentiators and honest risks. Prior government experience is asked for as information, never as a qualification.'],
       ['Statutory gate runs automatically', 'DPIIT recognition and validity, entity age under ten years, turnover never above INR 100 crore, not formed by reconstruction, correct entity type. Each check is stored with the rule it comes from.'],
       ['Challenge fit gate', 'Claimed TRL against the declared floor, quoted cost against the ceiling, proposed timeline against the pilot window.'],
       ['Relaxations applied', 'Prior turnover and prior experience waived, EMD and tender fee exempted. Applied by default, recorded on the file.'],
-      ['Committee assigned', 'Domain experts are assigned by the nodal officer. Each declares conflict of interest before any score can be entered.'],
-      ['Blind first pass', 'The evaluator sees the solution, not the applicant, until their score is submitted and locked.'],
-      ['Two-envelope scoring', 'Technical 70, commercial 30. A technical score under 45 out of 70 disqualifies regardless of price.'],
-      ['Dispersion check', 'If committee scores differ by more than 20 marks the platform flags it and a reconciliation sitting is required before a shortlist can be published.'],
+      ['Evaluator assigned', 'An authorised evaluator is assigned by the nodal officer and must declare any conflict of interest before starting the calculation.'],
+      ['Blind evidence evaluation', 'The evaluator sees the solution, not the applicant. The versioned engine derives capability, fit, evidence, governance, scalability, readiness, security, financial and risk scores from stored records.'],
+      ['Confidence and risk controls', 'Weak evidence reduces claimed capability and fit. Eligibility failure, critical security risk and failed mandatory KPIs override mathematical averages.'],
+      ['Result locked and explained', 'The final score, recommendation, positive and negative factors, review flags and missing-data limitations are stored together and written to the hash-chained audit trail.'],
     ],
     artefact: 'Application AVS/AP/YYYY/NNNN with an itemised gate result',
     gate: 'A blocked applicant is told the exact criterion and the exact rule. Nothing is decided informally.',
@@ -88,7 +88,7 @@ const ROLES = [
   ['Startup', 'Registers with DPIIT recognition, applies to problem statements, runs pilots, raises invoices and grievances.', 'Own applications, own pilots, own contracts, own payments. Public listings.'],
   ['Nodal Officer', 'Drafts problem statements, assigns the evaluation committee, shortlists, creates pilots.', 'Everything within their own department. Cannot approve their own publication.'],
   ['Department Head', 'Approves publication, sanctions procurement, records pilot closure verdicts, reads the audit trail.', 'Everything within their own department, plus approval authority.'],
-  ['Evaluator', 'Scores assigned applications against the published rubric after declaring conflict of interest.', 'Only applications assigned to them, blind until their score is submitted.'],
+  ['Evaluator', 'Initiates the automated evidence evaluation after declaring conflict of interest and reviews its explanation.', 'Only applications assigned to them, blind until the result is submitted.'],
   ['Pilot Monitor', 'Reviews milestone evidence, verifies KPI readings, records the closure verdict.', 'Pilots in their own department.'],
   ['Procurement Officer', 'Drafts procurement proposals, issues purchase orders, releases payments, lists proven solutions.', 'Procurement and payments in their own department.'],
   ['Platform Administrator', 'Manages accounts, verifies KYC, verifies audit-chain integrity.', 'Platform-wide, but cannot score, approve or sanction on behalf of a department.'],
@@ -290,47 +290,51 @@ export default function HowItWorks() {
                 </div>
               </Card>
 
-              <Card title="Evaluation buckets">
-                <div className="stack gap-3">
-                  <div>
-                    <div className="row between mb-2"><span className="small strong">Technical</span><span className="tnum">70 marks</span></div>
-                    <div className="bar"><div className="bar__fill" style={{ width: '70%' }} /></div>
-                  </div>
-                  <div>
-                    <div className="row between mb-2"><span className="small strong">Commercial</span><span className="tnum">30 marks</span></div>
-                    <div className="bar"><div className="bar__fill bar__fill--amber" style={{ width: '30%' }} /></div>
-                  </div>
+              <Card title="Evidence evaluation">
+                <p className="small dim mb-3">
+                  The server-side engine combines capability, problem fit, verified evidence,
+                  governance, scalability, pilot readiness, security, financial continuity and
+                  risk. Its current version is {meta?.evaluationEngine?.algorithmVersion ?? '1.0.0'}.
+                </p>
+                <div className="stack gap-2 small">
+                  <div className="row between"><span className="dim">Minimum preferred evidence confidence</span><span className="tnum strong">{meta?.evaluationEngine?.minimumEvidenceConfidence ?? 55}</span></div>
+                  <div className="row between"><span className="dim">Scale recommendation threshold</span><span className="tnum strong">{meta?.evaluationEngine?.minimumScaleRecommendationScore ?? 75}</span></div>
+                  <div className="row between"><span className="dim">Mandatory risk-review threshold</span><span className="tnum strong">{meta?.evaluationEngine?.manualReviewRiskThreshold ?? 70}</span></div>
                 </div>
                 <div className="mt-4">
-                  <Notice tone="warning" icon={false}>
-                    A technical score below {meta?.evaluation?.qualifyingTechnical ?? 45} out of 70 disqualifies
-                    regardless of price. Cheapness cannot buy its way past a technical failure.
+                  <Notice tone="legal" icon={false}>
+                    The calculation is deterministic and versioned. It does not call a generative-AI
+                    service and does not award a contract automatically.
                   </Notice>
                 </div>
               </Card>
 
               <Card title="Integrity controls">
                 <ul className="small dim stack gap-2" style={{ paddingLeft: '1.1em' }}>
-                  <li>Conflict-of-interest declaration is mandatory before a score can be entered.</li>
+                  <li>Conflict-of-interest declaration is mandatory before an evaluation can run.</li>
                   <li>The first pass is blind: the evaluator sees the solution, not the applicant.</li>
-                  <li>A submitted score is locked and cannot be edited.</li>
-                  <li>Committee spread above 20 marks flags a reconciliation sitting.</li>
-                  <li>Every score submission is written to the hash-chained audit trail.</li>
+                  <li>The result and its algorithm version are locked and cannot be edited.</li>
+                  <li>Missing source data is scored conservatively and disclosed as a limitation.</li>
+                  <li>Every automated result is written to the hash-chained audit trail.</li>
                 </ul>
               </Card>
             </div>
 
-            <Card title="Scoring rubric" subtitle="Published in advance; the same rubric for every applicant to a problem statement" flush>
-              <DataTable
-                columns={[
-                  { key: 'label', header: 'Criterion', render: (r) => (<><span className="cell-title">{r.label}</span><span className="cell-sub">{r.description}</span></>) },
-                  { key: 'bucket', header: 'Envelope', render: (r) => <Status plain tone={r.bucket === 'TECHNICAL' ? 'accent' : 'pilot'} label={r.bucket === 'TECHNICAL' ? 'Technical' : 'Commercial'} /> },
-                  { key: 'max_score', header: 'Max', align: 'right' },
-                  { key: 'weight', header: 'Weight', align: 'right', render: (r) => <span className="tnum">×{r.weight}</span> },
-                ]}
-                rows={meta?.evaluation?.criteria ?? []}
-                empty={{ title: 'Loading' }}
-              />
+            <Card title="How the result is formed" subtitle="The same versioned rules are applied to every applicant">
+              <div className="grid grid--3">
+                <div>
+                  <div className="capline mb-2">Evidence adjustment</div>
+                  <p className="small dim">High capability and problem-fit claims are reduced when official verification, independent validation, references or supporting documents are weak.</p>
+                </div>
+                <div>
+                  <div className="capline mb-2">Mandatory overrides</div>
+                  <p className="small dim">Eligibility failure or critical security risk puts the application on hold. Critical overall risk or very weak evidence forces review.</p>
+                </div>
+                <div>
+                  <div className="capline mb-2">Human authority retained</div>
+                  <p className="small dim">The engine recommends; authorised officials remain responsible for shortlisting, pilot approval and procurement, with reasons recorded on file.</p>
+                </div>
+              </div>
             </Card>
           </div>
         )}

@@ -21,7 +21,7 @@ export default function Dashboard() {
           <h1>{greeting()}, {user?.name?.split(' ')[0]}</h1>
           <p>
             {perms.isStartup && 'Your applications, pilots and payments across every participating department.'}
-            {perms.isEvaluator && 'Applications assigned to you for scoring, and what is still outstanding.'}
+            {perms.isEvaluator && 'Applications assigned to you for automated evidence evaluation, and what is still outstanding.'}
             {perms.isOfficial && !perms.isEvaluator && `${user?.department?.name || 'Platform'} — pipeline from problem statement to contract.`}
           </p>
         </div>
@@ -156,8 +156,8 @@ function EvaluatorBody() {
 
   return (
     <Card
-      title="Awaiting your score"
-      subtitle="Applicant identity is withheld until your score is submitted and locked"
+      title="Awaiting evaluation"
+      subtitle="Applicant identity is withheld until the automated result is submitted and locked"
       actions={<Link className="btn btn--ghost btn--sm" to="/app/evaluations">Full worklist</Link>}
       flush
     >
@@ -173,7 +173,7 @@ function EvaluatorBody() {
           { key: 'assigned_at', header: 'Assigned', render: (r) => <span className="small muted">{relative(r.assigned_at)}</span> },
         ]}
         rows={pending}
-        empty={{ title: 'Nothing pending', body: 'Every application assigned to you has been scored.' }}
+        empty={{ title: 'Nothing pending', body: 'Every application assigned to you has been evaluated.' }}
       />
     </Card>
   );

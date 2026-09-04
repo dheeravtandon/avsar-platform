@@ -84,6 +84,7 @@ export const endpoints = {
 
   evaluationCriteria: () => '/evaluations/criteria',
   myEvaluations: () => '/evaluations/mine',
+  runAutomatedEvaluation: (id) => `/evaluations/${id}/auto-score`,
   submitScore: (id) => `/evaluations/${id}/score`,
   evaluationSummary: (challengeId) => `/evaluations/challenge/${challengeId}/summary`,
 

@@ -4,14 +4,13 @@ import { useApi, useDocumentTitle } from '../lib/hooks.js';
 import { api, endpoints } from '../lib/api.js';
 import { inr, relative } from '../lib/format.js';
 import {
-  Bar, Button, Card, DataTable, DL, ErrorState, Field, Loading, Modal,
-  Notice, PageHead, Select, Status, Textarea, Tile, useToast, CheckLine, Empty,
+  Bar, Button, Card, CheckLine, DataTable, DL, ErrorState, Loading,
+  Modal, Notice, PageHead, Status, Tile, useToast,
 } from '../components/ui.jsx';
 
 export default function Evaluations() {
   useDocumentTitle('Evaluation worklist');
   const { data, loading, error, reload } = useApi(endpoints.myEvaluations(), []);
-  const { data: rubric } = useApi(endpoints.evaluationCriteria(), []);
   const [open, setOpen] = useState(null);
 
   const pending = (data ?? []).filter((e) => e.status === 'ASSIGNED');
@@ -21,13 +20,13 @@ export default function Evaluations() {
     <AppShell crumbs={[{ label: 'Evaluations' }]}>
       <PageHead
         title="Evaluation worklist"
-        lede="Applications assigned to you. The first pass is blind: you see the solution, not the applicant, until your score is submitted and locked."
+        lede="Run a blind, explainable evidence evaluation using the application records already verified by AVSAR. Results are versioned, auditable and locked when submitted."
       />
 
       <div className="grid grid--3 mb-6">
         <Tile label="Assigned to me" value={data?.length ?? 0} accent="accent" />
-        <Tile label="Awaiting my score" value={pending.length} accent={pending.length ? 'saffron' : 'green'} />
-        <Tile label="Submitted and locked" value={done.length} />
+        <Tile label="Awaiting evaluation" value={pending.length} accent={pending.length ? 'saffron' : 'green'} />
+        <Tile label="Completed and locked" value={done.length} />
       </div>
 
       {loading && <Loading rows={5} />}
@@ -35,52 +34,51 @@ export default function Evaluations() {
 
       {!loading && !error && (
         <div className="stack gap-4">
-          <Card title="Awaiting your score" flush>
+          <Card title="Awaiting automated evaluation" flush>
             <DataTable
-              onRowClick={(r) => setOpen(r)}
+              onRowClick={(row) => setOpen(row)}
               columns={[
                 { key: 'application_code', header: 'File', mono: true },
                 {
                   key: 'solution_title', header: 'Solution',
-                  render: (r) => (<><span className="cell-title">{r.solution_title}</span><span className="cell-sub">{r.challenge_code} · {r.challenge_title}</span></>),
+                  render: (row) => (<><span className="cell-title">{row.solution_title}</span><span className="cell-sub">{row.challenge_code} · {row.challenge_title}</span></>),
                 },
-                { key: 'sector', header: 'Sector', render: (r) => <span className="small">{r.sector}</span> },
+                { key: 'sector', header: 'Sector', render: (row) => <span className="small">{row.sector}</span> },
                 { key: 'trl_claimed', header: 'TRL', align: 'right' },
-                { key: 'quoted_pilot_cost', header: 'Quote', align: 'right', render: (r) => <span className="tnum">{inr(r.quoted_pilot_cost)}</span> },
-                { key: 'assigned_at', header: 'Assigned', render: (r) => <span className="small muted">{relative(r.assigned_at)}</span> },
-                { key: 'go', header: '', align: 'right', render: () => <Button size="sm" variant="primary">Score</Button> },
+                { key: 'quoted_pilot_cost', header: 'Quote', align: 'right', render: (row) => <span className="tnum">{inr(row.quoted_pilot_cost)}</span> },
+                { key: 'assigned_at', header: 'Assigned', render: (row) => <span className="small muted">{relative(row.assigned_at)}</span> },
+                { key: 'go', header: '', align: 'right', render: () => <Button size="sm" variant="primary">Evaluate</Button> },
               ]}
               rows={pending}
-              rowKey={(r) => r.id}
-              empty={{ title: 'Nothing pending', body: 'Every application assigned to you has been scored.' }}
+              rowKey={(row) => row.id}
+              empty={{ title: 'Nothing pending', body: 'Every assigned application has been evaluated.' }}
             />
           </Card>
 
-          <Card title="Scores you have submitted" subtitle="Locked. A submitted score cannot be edited." flush>
+          <Card title="Completed evaluations" subtitle="Locked results cannot be edited. Open a row to inspect its evidence and review flags." flush>
             <DataTable
-              onRowClick={(r) => setOpen(r)}
+              onRowClick={(row) => setOpen(row)}
               columns={[
                 { key: 'application_code', header: 'File', mono: true },
-                { key: 'solution_title', header: 'Solution', render: (r) => <span className="cell-title">{r.solution_title}</span> },
+                { key: 'solution_title', header: 'Solution', render: (row) => <span className="cell-title">{row.solution_title}</span> },
                 {
-                  key: 'total_score', header: 'My score', align: 'right',
-                  render: (r) => (<div style={{ minWidth: 84 }}><div className="row between mb-2"><span className="tnum strong">{r.total_score}</span><span className="xs muted">/100</span></div><Bar value={r.total_score} /></div>),
+                  key: 'total_score', header: 'Score', align: 'right',
+                  render: (row) => (<div style={{ minWidth: 84 }}><div className="row between mb-2"><span className="tnum strong">{row.total_score}</span><span className="xs muted">/100</span></div><Bar value={row.total_score} /></div>),
                 },
-                { key: 'recommendation', header: 'Recommendation', render: (r) => <Status code={r.recommendation} /> },
-                { key: 'submitted_at', header: 'Submitted', render: (r) => <span className="small muted">{relative(r.submitted_at)}</span> },
+                { key: 'recommendation', header: 'Recommendation', render: (row) => <Status code={row.recommendation} /> },
+                { key: 'submitted_at', header: 'Completed', render: (row) => <span className="small muted">{relative(row.submitted_at)}</span> },
               ]}
               rows={done}
-              rowKey={(r) => r.id}
-              empty={{ title: 'No submitted scores yet' }}
+              rowKey={(row) => row.id}
+              empty={{ title: 'No completed evaluations yet' }}
             />
           </Card>
         </div>
       )}
 
       {open && (
-        <ScoreSheet
+        <AutomatedEvaluationSheet
           item={open}
-          rubric={rubric}
           onClose={() => setOpen(null)}
           onDone={() => { setOpen(null); reload(); }}
         />
@@ -89,43 +87,27 @@ export default function Evaluations() {
   );
 }
 
-function ScoreSheet({ item, rubric, onClose, onDone }) {
+function AutomatedEvaluationSheet({ item, onClose, onDone }) {
   const toast = useToast();
-  const locked = item.status === 'SUBMITTED';
-  const criteria = rubric?.criteria ?? [];
-
-  const [scores, setScores] = useState(() => item.scores || {});
-  const [remarks, setRemarks] = useState(item.remarks || '');
-  const [recommendation, setRecommendation] = useState(item.recommendation || '');
+  const stored = item.scores?.evaluationMode === 'AUTOMATED' ? item.scores : null;
+  const [result, setResult] = useState(stored?.result ?? null);
+  const [inputBasis, setInputBasis] = useState(stored?.inputBasis ?? null);
+  const [committeeRecommendation, setCommitteeRecommendation] = useState(item.recommendation ?? null);
   const [coi, setCoi] = useState(!!item.coi_declared);
   const [busy, setBusy] = useState(false);
+  const [completedNow, setCompletedNow] = useState(false);
+  const locked = item.status === 'SUBMITTED' || completedNow;
 
-  const bucketTotals = (bucket) => {
-    const list = criteria.filter((c) => c.bucket === bucket);
-    const got = list.reduce((s, c) => s + Math.min(c.max_score, Number(scores[c.code] || 0)) * c.weight, 0);
-    const max = list.reduce((s, c) => s + c.max_score * c.weight, 0) || 1;
-    const cap = rubric?.bucketCap?.[bucket] ?? 0;
-    return Math.round((got / max) * cap * 100) / 100;
-  };
-
-  const technical = bucketTotals('TECHNICAL');
-  const commercial = bucketTotals('COMMERCIAL');
-  const total = Math.round((technical + commercial) * 100) / 100;
-  const qualifies = technical >= (rubric?.qualifyingTechnical ?? 45);
-  const complete = criteria.every((c) => scores[c.code] !== undefined && scores[c.code] !== '');
-  const ready = complete && coi && remarks.length >= 20 && recommendation;
-
-  const submit = async () => {
+  const close = () => completedNow ? onDone() : onClose();
+  const run = async () => {
     setBusy(true);
     try {
-      await api.post(endpoints.submitScore(item.id), {
-        scores: Object.fromEntries(Object.entries(scores).map(([k, v]) => [k, Number(v)])),
-        remarks,
-        recommendation,
-        coiDeclared: coi,
-      });
-      toast.success('Score submitted and locked');
-      onDone();
+      const payload = await api.post(endpoints.runAutomatedEvaluation(item.id), { coiDeclared: coi });
+      setResult(payload.result);
+      setInputBasis(payload.inputBasis);
+      setCommitteeRecommendation(payload.recommendation);
+      setCompletedNow(true);
+      toast.success('Automated evaluation completed and locked');
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -136,23 +118,24 @@ function ScoreSheet({ item, rubric, onClose, onDone }) {
   return (
     <Modal
       open wide
-      title={locked ? 'Submitted score' : 'Score this application'}
+      title={locked ? 'Evaluation result' : 'Automated evidence evaluation'}
       subtitle={`${item.application_code} · ${item.challenge_code} · ${item.dept_name}`}
-      onClose={onClose}
-      footer={locked ? <Button onClick={onClose}>Close</Button> : (
+      onClose={close}
+      footer={locked ? <Button variant="primary" onClick={close}>Close</Button> : (
         <>
           <Button onClick={onClose}>Cancel</Button>
-          <Button variant="primary" loading={busy} disabled={!ready} onClick={submit}>
-            Submit and lock score
+          <Button variant="primary" loading={busy} disabled={!coi} onClick={run}>
+            Run and lock evaluation
           </Button>
         </>
       )}
     >
       {!locked && (
         <div className="mb-4">
-          <Notice tone="info" title="Blind evaluation">
-            The applicant&apos;s identity is withheld from you until your score is submitted. Score the
-            solution against the published rubric and the KPIs the department declared.
+          <Notice tone="info" title="Explainable automated evaluation">
+            AVSAR will score the application with the versioned evidence algorithm. It uses stored
+            application, eligibility, startup and challenge records; it does not call an external
+            generative-AI service. The applicant remains blinded until the result is locked.
           </Notice>
         </div>
       )}
@@ -168,7 +151,7 @@ function ScoreSheet({ item, rubric, onClose, onDone }) {
             ['Quoted pilot cost', <span className="tnum">{inr(item.quoted_pilot_cost)}</span>],
             ['Against ceiling', <span className="tnum muted">{inr(item.pilot_budget_ceiling)}</span>],
             ['Proposed timeline', `${item.timeline_weeks} weeks`],
-            ['Prior deployments', item.prior_deployments],
+            ['Prior deployments', item.prior_deployments || 'Not declared'],
           ]} />
         </div>
       </Card>
@@ -178,83 +161,87 @@ function ScoreSheet({ item, rubric, onClose, onDone }) {
           <DataTable
             columns={[
               { key: 'label', header: 'Indicator' },
-              { key: 'target', header: 'Target', align: 'right', render: (k) => <span className="tnum">{k.target} {k.unit}</span> },
-              { key: 'direction', header: '', render: (k) => <span className="xs muted">{k.direction === 'DOWN' ? 'lower is better' : 'higher is better'}</span> },
+              { key: 'target', header: 'Target', align: 'right', render: (kpi) => <span className="tnum">{kpi.target} {kpi.unit}</span> },
+              { key: 'direction', header: '', render: (kpi) => <span className="xs muted">{kpi.direction === 'DOWN' ? 'lower is better' : 'higher is better'}</span> },
             ]}
             rows={item.success_kpis}
-            rowKey={(k) => k.key}
+            rowKey={(kpi) => kpi.key}
           />
         </Card>
       )}
 
-      <div className="grid grid--2 mb-4">
-        <div className="tile tile--accent">
-          <div className="tile__label">Technical envelope</div>
-          <div className="tile__value">{technical}<span className="muted" style={{ fontSize: 'var(--text-md)' }}> / 70</span></div>
-          <div className="tile__foot" style={{ color: qualifies ? 'var(--green-700)' : 'var(--red-700)' }}>
-            {qualifies ? 'Above the qualifying threshold' : `Below the qualifying threshold of ${rubric?.qualifyingTechnical ?? 45}`}
-          </div>
-        </div>
-        <div className="tile tile--saffron">
-          <div className="tile__label">Commercial envelope</div>
-          <div className="tile__value">{commercial}<span className="muted" style={{ fontSize: 'var(--text-md)' }}> / 30</span></div>
-          <div className="tile__foot">Total {total} of 100</div>
-        </div>
-      </div>
-
-      <div className="stack gap-4">
-        {['TECHNICAL', 'COMMERCIAL'].map((bucket) => (
-          <div key={bucket}>
-            <div className="capline mb-3">{bucket === 'TECHNICAL' ? 'Technical criteria' : 'Commercial criteria'}</div>
-            <div className="stack gap-3">
-              {criteria.filter((c) => c.bucket === bucket).map((c) => (
-                <div key={c.code} className="row gap-4" style={{ alignItems: 'flex-start' }}>
-                  <div className="grow">
-                    <div className="small strong">{c.label} <span className="muted xs">×{c.weight}</span></div>
-                    <div className="xs muted">{c.description}</div>
-                  </div>
-                  <div style={{ width: 190, flex: 'none' }}>
-                    <input
-                      type="range" min="0" max={c.max_score} step="0.5"
-                      value={scores[c.code] ?? ''} disabled={locked}
-                      onChange={(e) => setScores((s) => ({ ...s, [c.code]: e.target.value }))}
-                      style={{ width: '100%', accentColor: 'var(--brand-700)' }}
-                      aria-label={c.label}
-                    />
-                    <div className="row between xs muted"><span>0</span><span className="tnum strong" style={{ color: 'var(--ink-900)' }}>{scores[c.code] ?? '—'}</span><span>{c.max_score}</span></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5">
-        <Field label="Recommendation" required>
-          <Select
-            value={recommendation} onChange={(e) => setRecommendation(e.target.value)} disabled={locked}
-            placeholder="Select a recommendation"
-            options={[
-              { value: 'RECOMMEND', label: 'Recommend for pilot' },
-              { value: 'RECOMMEND_WITH_CONDITIONS', label: 'Recommend with conditions' },
-              { value: 'NOT_RECOMMEND', label: 'Do not recommend' },
-            ]}
-          />
-        </Field>
-        <Field
-          label="Written justification" required
-          hint={`Minimum 20 characters. This is what an auditor reads. ${remarks.length} entered.`}
-        >
-          <Textarea rows={4} value={remarks} onChange={(e) => setRemarks(e.target.value)} disabled={locked} />
-        </Field>
-        {!locked && (
-          <CheckLine checked={coi} onChange={setCoi} title="I declare no conflict of interest">
-            I have no financial interest in, employment relationship with, or family connection to the
-            applicant, and no other interest that could reasonably be seen to affect my judgement.
-          </CheckLine>
-        )}
-      </div>
+      {result ? (
+        <EvaluationResult result={result} inputBasis={inputBasis} committeeRecommendation={committeeRecommendation} />
+      ) : item.status === 'SUBMITTED' ? (
+        <LegacyResult item={item} />
+      ) : (
+        <CheckLine checked={coi} onChange={setCoi} title="I declare no conflict of interest">
+          I have no financial interest in, employment relationship with, or family connection to the
+          applicant, and no other interest that could reasonably be seen to affect my judgement.
+        </CheckLine>
+      )}
     </Modal>
   );
 }
+
+function EvaluationResult({ result, inputBasis, committeeRecommendation }) {
+  const scores = result.scores;
+  return (
+    <div className="stack gap-4">
+      <div className="grid grid--3">
+        <Tile label="Final score" value={`${scores.finalScore}/100`} accent="accent" />
+        <Tile label="Overall risk" value={result.riskLevel} accent={result.riskLevel === 'LOW' ? 'green' : 'saffron'} />
+        <Tile label="Committee outcome" value={<Status code={committeeRecommendation} />} />
+      </div>
+
+      <Card title={`Evidence engine · version ${result.algorithmVersion}`}>
+        <DL tight items={[
+          ['Engine recommendation', readable(result.recommendation)],
+          ['Eligibility', result.eligibility.status],
+          ['Startup capability', `${scores.startupCapability}/100`],
+          ['Problem fit', `${scores.problemFit}/100`],
+          ['Evidence confidence', `${scores.evidenceConfidence}/100`],
+          ['Pilot readiness', `${scores.pilotReadiness}/100`],
+          ['Security readiness', `${scores.securityReadiness}/100`],
+          ['Scalability', `${scores.scalability}/100`],
+        ]} />
+      </Card>
+
+      {result.mandatoryReviewFlags.length > 0 && (
+        <Notice tone="warning" title="Mandatory review flags">
+          {result.mandatoryReviewFlags.map(readable).join(' · ')}
+        </Notice>
+      )}
+
+      <FactorCard title="Positive evidence" items={result.explanation.positiveFactors} empty="No positive threshold factor was triggered." />
+      <FactorCard title="Concerns and weak evidence" items={[
+        ...result.explanation.negativeFactors,
+        ...result.explanation.missingOrWeakEvidence,
+      ]} empty="No negative threshold factor was triggered." />
+      <FactorCard title="Data limitations" items={inputBasis?.limitations ?? []} empty="No limitations recorded." />
+    </div>
+  );
+}
+
+function FactorCard({ title, items, empty }) {
+  return (
+    <Card title={title}>
+      {items.length ? (
+        <ul className="reading small" style={{ margin: 0, paddingLeft: 20 }}>
+          {items.map((item, index) => <li key={`${index}-${item}`} className="mb-2">{item}</li>)}
+        </ul>
+      ) : <p className="small muted">{empty}</p>}
+    </Card>
+  );
+}
+
+function LegacyResult({ item }) {
+  return (
+    <Notice tone="info" title="Earlier committee score">
+      This result was submitted with the previous manual rubric. Score: {item.total_score}/100.
+      {item.remarks ? ` ${item.remarks}` : ''}
+    </Notice>
+  );
+}
+
+const readable = (value) => String(value ?? '').replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());

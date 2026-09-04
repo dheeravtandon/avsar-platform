@@ -143,8 +143,8 @@ export default function ApplicationDetail() {
 
         {tab === 'scores' && (
           <Card
-            title="Committee evaluation"
-            subtitle="Technical 70, commercial 30. A submitted score is locked and cannot be edited."
+            title="Evaluation results"
+            subtitle="Versioned evaluation results are locked and cannot be edited. Earlier manual results remain visible."
             flush
           >
             <DataTable
@@ -307,8 +307,8 @@ function ActionModal({ modal, setModal, a, reload, toast, navigate }) {
       {modal?.kind === 'committee' && (
         <>
           <p className="small muted mb-4">
-            Each evaluator must declare a conflict of interest before scoring. Their first pass is
-            blind — the applicant&apos;s identity is withheld until the score is submitted and locked.
+            Each evaluator must declare a conflict of interest before running the evidence engine. The
+            first pass is blind — the applicant&apos;s identity is withheld until the result is submitted and locked.
           </p>
           <div className="stack gap-2">
             {(evaluators ?? []).map((e) => (

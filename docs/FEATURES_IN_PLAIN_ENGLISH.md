@@ -16,7 +16,7 @@ open the linked source file directly for that.
 ## 1. The big idea, in one sentence
 
 **A government department says what problem it has and what "fixed" looks like in numbers. Startups
-apply. The system checks they're legally allowed to apply, a panel scores the good ones, the winner
+apply. The system checks they're legally allowed to apply, an explainable evidence engine evaluates the good ones, the winner
 gets a small paid trial run, and only if that trial actually works does the government sign a real
 contract — and other departments can then buy the same thing without redoing any of this.**
 
@@ -34,7 +34,7 @@ check, an interview, and a paid trial period.
 | Stage | What it means in plain words | Real-world comparison |
 |---|---|---|
 | **Assess** | The department writes down the problem and what "success" looks like as a number — not what software to build. | Posting a job listing that says "we need someone who can cut delivery time by 30%," not "we need someone who knows exactly this one tool." |
-| **Validate** | The system checks that the startup is legally who it says it is, then a panel scores the applications. | Checking a job candidate's ID and references, then an interview panel scoring them. |
+| **Validate** | The system checks that the startup is legally who it says it is, then a versioned evidence engine evaluates the applications. | Checking a job candidate's ID, evidence and references against the same published decision rules. |
 | **Sandbox** | The winning startup gets a small, time-boxed, paid trial to prove the idea actually works in the real world. | A 90-day probation period before a job becomes permanent. |
 | **Adopt** | If the trial worked, the department signs a real contract — and has to write down, in words, exactly why. | Confirming the hire, with HR keeping a note of exactly why this person was chosen. |
 | **Ramp-up** | Once one department has proven a solution works, any other department can just buy it too, at the same price, without repeating the whole process. | If one branch of a company hires a great contractor, every other branch can hire the same person on the same terms without re-interviewing them. |
@@ -103,34 +103,27 @@ we need it, first-time government supplier (not held against them)."*
 
 ## 5. The evaluation panel — "who actually picks the winner?"
 
-**In plain words:** A department assigns 2–3 human experts (the "evaluation committee") to
-independently score each application. Nobody scores alone, and — this is the important part — the
-scoring is split into two separate categories that can never mix.
+**In plain words:** An authorised evaluator starts a blind, automated evidence assessment. The
+versioned server-side engine combines the facts AVSAR already holds about eligibility, capability,
+problem fit, references, governance, finance, security, scalability and pilot readiness.
 
-**The two categories:**
-- **Technical score (70 points):** Does the idea actually work? Is the team capable?
-- **Commercial score (30 points):** Is the price reasonable? Is the timeline realistic?
+**Why it is explainable:** Weak evidence reduces otherwise high claims. Hard gates such as an
+eligibility failure or critical security risk override the weighted average. The result contains the
+final score, risk level, recommendation, positive and negative factors, mandatory review flags and a
+list of information AVSAR could not verify.
 
-**The rule that makes this fair:** An application has to clear a minimum technical bar (45 out of 70)
-*before* the commercial/price score even counts. This stops the classic problem of "the cheapest bid
-wins even though it doesn't actually work" — price is only allowed to be a tiebreaker between ideas
-that already work.
+**What remains human:** The evaluator must declare conflict of interest and initiate the calculation.
+Authorised officials still make shortlisting, pilot and procurement decisions. The algorithm never
+awards a contract automatically.
 
-**The "did the judges agree with each other?" check:** If two evaluators score wildly differently
-(more than 20 points apart), the system automatically flags it and tells the department "your judges
-disagree — you need a reconciliation meeting before you decide." Nobody has to remember to check for
-this by hand.
+**Blind evaluation:** The applicant's identity is withheld until the result is submitted and locked.
+The engine receives the application file code rather than the startup's legal name.
 
-**Blind scoring:** Until an evaluator submits their own score, they don't get to see whether another
-evaluator's score is high or low — so nobody's opinion is influenced by seeing someone else's number
-first.
+**Important:** This is deterministic evidence scoring, not a generative-AI opinion. Running the same
+algorithm version on the same records produces the same answer.
 
-**Analogy:** Exactly how a cooking competition works — a technical score for "does the dish actually
-taste good and is it cooked properly" has to pass a bar before the judges even look at "how much did
-the ingredients cost." And if one judge gives it a 9 and another gives it a 2, the show doesn't just
-average it and move on — someone has to explain the gap.
-
-**File:** [server/src/services/scoring.js](../server/src/services/scoring.js)
+**Files:** [server/src/services/evaluationEngine.js](../server/src/services/evaluationEngine.js) and
+[server/src/services/automatedEvaluation.js](../server/src/services/automatedEvaluation.js)
 
 ---
 
@@ -258,10 +251,10 @@ be trusted to do in real life:
 
 | Role | What they can do | What they can't do |
 |---|---|---|
-| **Startup** | Apply to problems, run their pilot, submit milestone evidence | Score their own application, approve their own payment |
-| **Nodal Officer** | Draft problem statements, assign the evaluation panel | Approve and publish it themselves (needs sign-off) |
+| **Startup** | Apply to problems, run their pilot, submit milestone evidence | Evaluate their own application, approve their own payment |
+| **Nodal Officer** | Draft problem statements, assign an authorised evaluator | Approve and publish it themselves (needs sign-off) |
 | **Department Head** | Approve/publish problem statements, sanction procurement | — |
-| **Evaluator** | Score applications assigned to them | See who scored what until they submit their own score first |
+| **Evaluator** | Declare conflicts and initiate the evidence engine for assigned applications | Change a locked result or see the applicant identity before submission |
 | **Pilot Monitor** | Review milestone evidence, record the final pilot verdict | Approve their own department's budget |
 | **Procurement Officer** | Draft and process the actual purchase paperwork | Approve their own draft (needs Department Head sign-off) |
 | **Admin** | Sees and manages everything, for platform operation | — |

@@ -203,11 +203,11 @@ listed as a next step — do not claim certified conformance.
 The API. `POST /api/challenges/:id/transition` to `PUBLISHED` returns 403 unless the caller is
 `DEPT_HEAD` or `ADMIN`. Separation of duties is tested explicitly in the E2E suite.
 
-**Q. What stops an evaluator changing a score after seeing others?**
-A submitted score is locked — a second submission returns 409. The first pass is blind: the applicant
-identity is withheld until the score is submitted. Conflict of interest must be declared before any
-score is accepted (400 otherwise). And if committee scores differ by more than 20 marks, the platform
-flags a mandatory reconciliation sitting.
+**Q. What stops an evaluator changing a result after seeing others?**
+An automated result is locked — a second submission returns 409. The first pass is blind: the
+applicant identity is withheld until the result is submitted. Conflict of interest must be declared
+before the evidence engine runs (400 otherwise). The algorithm version, factors, review flags and
+missing-data limitations are stored with the result and written to the audit trail.
 
 ---
 
@@ -223,7 +223,7 @@ Sign-in is one click per role on `/login`; every account uses **`Avsar@2026`**.
 | 4 | 2:10 | Open `AVS/CH/2026/0001` → **Discover startups** tab | "Reverse discovery. Open any row: every point in the match score has a reason. That is what makes a shortlist defensible in audit." |
 | 5 | 3:00 | Open the pilot `AVS/PL/2026/0001` → **KPI scorecard** | "Non-revenue water: 34% down to 13.8% against a 15% target. This is the evidence that unlocks procurement — the platform refuses a procurement on a pilot with no verdict." |
 | 6 | 4:00 | **Milestones** tab, then **Payments** | "Acceptance starts a 45-day clock under MSMED Act section 15. It is visible to both sides and a breach is published." |
-| 7 | 4:45 | Sign in as **Evaluator**, open a pending score | "Blind — I can see the solution, not the applicant. Conflict of interest is mandatory. Once submitted, the score locks." |
+| 7 | 4:45 | Sign in as **Evaluator**, open a pending evaluation | "Blind and explainable — I can see the solution, not the applicant. Conflict of interest is mandatory. The versioned engine shows its evidence factors, risks and limitations, then locks the result." |
 | 8 | 5:30 | **Proven Solutions Registry** → Adopt | "Another department draws this down at a discovered price. Discovery, evaluation and pilot are not repeated. This is where the model stops paying for the same lesson twice." |
 | 9 | 6:15 | Sign in as **Admin** → **Audit trail** | "Hash-chained. Any retrospective edit breaks the chain and this check finds it." |
 | 10 | 6:45 | Terminal: `npm test` | "32 end-to-end assertions across all five stages, including every gate I just described." |
@@ -298,16 +298,16 @@ form. Everything else is integration work; that one changes how much the evidenc
 | Roles | 7 + public |
 | Entity age limit | 10 years |
 | Turnover ceiling | ₹100 crore in any financial year |
-| Evaluation split | Technical 70 / Commercial 30 |
-| Qualifying technical score | 45 of 70 |
-| Score dispersion flag | > 20 marks |
+| Evaluation model | Versioned deterministic evidence engine |
+| Minimum preferred evidence confidence | 55 of 100 |
+| Mandatory overall-risk review threshold | 70 of 100 |
 | Payment window | 45 days (MSMED Act s.15) |
 | Grievance SLA | 15 days |
 | Audit log retention | 180 days (CERT-In) |
 | Database tables | 17 |
-| API endpoints | 62 |
+| API endpoints | 63 |
 | React routes | 31 |
-| E2E assertions | 32, all passing |
+| Automated tests | Automated evaluation API test + 32 workflow assertions |
 | Native dependencies | zero |
 
 ---

@@ -17,7 +17,7 @@ The name is the workflow:
 | | Stage | What happens |
 |---|---|---|
 | **A** | **Assess** | The department publishes an outcome-based problem statement with a baseline, measurable KPIs and a capped pilot budget — not a technical specification. |
-| **V** | **Validate** | A statutory eligibility gate runs automatically, then a blind two-envelope committee evaluation (technical 70 / commercial 30). |
+| **V** | **Validate** | A statutory eligibility gate runs automatically, then a blind, versioned evidence evaluation produces an explainable score, risk level and recommendation. |
 | **S** | **Sandbox** | A funded, time-boxed pilot with milestone-linked payment and monthly KPI readings against the declared targets. |
 | **A** | **Adopt** | Procurement is raised only on a pilot with a recorded verdict, under a named General Financial Rules provision, with a written justification on the audit record. |
 | **R** | **Ramp-up** | The proven solution is listed on a rate contract; any other department draws it down without repeating discovery, evaluation or pilot. |
@@ -64,10 +64,10 @@ them consistently, automatically, and with a record.
 | 2.2 Statutory gate (automatic) | DPIIT recognition and validity, entity age ≤ 10 years, turnover never above ₹100 crore, not formed by reconstruction, eligible entity type. Each check is stored with the rule it comes from. |
 | 2.3 Challenge fit gate | Claimed TRL against the floor, quoted cost against the ceiling, timeline against the window. |
 | 2.4 Relaxations applied | Prior turnover and experience waived; EMD and tender fee exempted. Applied by default and recorded. |
-| 2.5 Committee assigned | Domain experts assigned by the nodal officer; each declares conflict of interest before scoring. |
-| 2.6 Blind first pass | The evaluator sees the solution, not the applicant, until their score is submitted and locked. |
-| 2.7 Two-envelope scoring | Technical 70, commercial 30. Below 45/70 technical disqualifies regardless of price. |
-| 2.8 Dispersion check | Committee spread above 20 marks flags a mandatory reconciliation sitting. |
+| 2.5 Evaluator assigned | An authorised evaluator is assigned by the nodal officer and declares conflict of interest before running the evaluation. |
+| 2.6 Blind evidence evaluation | The evaluator sees the solution, not the applicant. The versioned engine derives capability, fit, evidence, governance, scalability, readiness, security, financial and risk scores from stored records. |
+| 2.7 Confidence and risk controls | Weak evidence reduces claimed capability and fit. Mandatory eligibility, security and KPI gates override mathematical averages. |
+| 2.8 Locked explanation | The score, recommendation, reasons, review flags and missing-data limitations are stored and written to the hash-chained audit trail. |
 
 **Gate:** a blocked applicant is told the exact criterion and the exact rule.
 **Artefact:** `AVS/AP/YYYY/NNNN` with an itemised gate result
@@ -120,7 +120,7 @@ Failing is a permitted outcome — that is what makes it a sandbox.
 | **Startup** | Registers with DPIIT recognition, applies, runs pilots, raises invoices and grievances. | Own applications, pilots, contracts, payments; public listings. |
 | **Nodal Officer** | Drafts problem statements, assigns the committee, shortlists, creates pilots. | Everything in their own department. **Cannot approve their own publication.** |
 | **Department Head** | Approves publication, sanctions procurement, records pilot verdicts, reads the audit trail. | Own department, plus approval authority. |
-| **Evaluator** | Scores assigned applications against the published rubric after declaring conflict of interest. | Only assigned applications, **blind until their score is submitted**. |
+| **Evaluator** | Initiates the automated evidence evaluation after declaring conflict of interest and reviews its explanation. | Only assigned applications, **blind until the result is submitted**. |
 | **Pilot Monitor** | Reviews milestone evidence, verifies KPI readings, records the closure verdict. | Pilots in their own department. |
 | **Procurement Officer** | Drafts procurement, issues POs, releases payments, lists proven solutions. | Procurement and payments in their own department. |
 | **Platform Administrator** | Manages accounts, verifies KYC, verifies audit-chain integrity. | Platform-wide, but **cannot score, approve or sanction** on a department's behalf. |
@@ -150,9 +150,9 @@ Failing is a permitted outcome — that is what makes it a sandbox.
 | Runtime dependencies | 5 server (`express`, `cors`, `jsonwebtoken`, `bcryptjs`, `zod`, plus `dotenv`), 4 client |
 | Native/compiled dependencies | **zero** |
 | Database tables | 17 |
-| API endpoints | 62 |
+| API endpoints | 63 |
 | React routes | 31 (10 public, 21 authenticated) |
-| End-to-end tests | 32, all passing |
+| End-to-end tests | Automated evaluation API test plus 32 workflow assertions, all passing |
 
 ## 6. Running it
 
@@ -207,7 +207,9 @@ avsar/
 │  │  │  ├─ workflow.js         Every legal state transition, declared in one file
 │  │  │  ├─ eligibility.js      Statutory gate, each check citing its rule
 │  │  │  ├─ matching.js         Explainable weighted discovery score
-│  │  │  ├─ scoring.js          70/30 two-envelope model, consensus + dispersion
+│  │  │  ├─ evaluationEngine.js supplied deterministic evidence scoring model
+│  │  │  ├─ automatedEvaluation.js maps AVSAR records into the evidence model
+│  │  │  ├─ scoring.js          legacy 70/30 scores + historical consensus
 │  │  │  ├─ audit.js            Hash-chained log + chain verification
 │  │  │  ├─ ids.js              AVS/CH/2026/0001 file numbering
 │  │  │  └─ notify.js           In-app notifications

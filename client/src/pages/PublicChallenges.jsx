@@ -233,7 +233,7 @@ function Detail({ id }) {
             <Card title="What happens after you apply">
               <ol className="small stack gap-3" style={{ paddingLeft: '1.2em' }}>
                 <li><b>Eligibility gate.</b> Automatic and immediate. If you are blocked you are told which specific criterion failed and under which rule.</li>
-                <li><b>Committee evaluation.</b> Technical 70, commercial 30. The first pass is blind — the committee scores the solution before it sees the applicant.</li>
+                <li><b>Evidence evaluation.</b> A versioned, explainable algorithm scores verified records, adjusts claims for evidence confidence and flags risks. The first pass remains blind.</li>
                 <li><b>Pilot.</b> Shortlisted applicants are funded to run a time-boxed pilot with milestone-linked payment.</li>
                 <li><b>Procurement.</b> A pilot that clears its KPIs is procured under a named GFR rule with the justification on the public file.</li>
               </ol>

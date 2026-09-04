@@ -9,7 +9,7 @@
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
     "seed": "node src/db/seed.js",
-    "test": "node test/workflow.test.mjs"
+    "test": "node test/automated-evaluation.test.mjs && node test/workflow.test.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

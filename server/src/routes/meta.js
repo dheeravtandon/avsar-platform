@@ -7,6 +7,7 @@ import { STAGES, CHALLENGE_FLOW, APPLICATION_FLOW, PILOT_FLOW, PROCUREMENT_FLOW 
 import { relaxations } from '../services/eligibility.js';
 import { MATCH_WEIGHTS } from '../services/matching.js';
 import { BUCKET_CAP, QUALIFYING_TECHNICAL } from '../services/scoring.js';
+import { DEFAULT_EVALUATION_CONFIG } from '../services/evaluationEngine.js';
 import { ROLE_LABELS } from '../middleware/auth.js';
 
 const router = Router();
@@ -79,6 +80,16 @@ router.get('/', softAuthenticate, wrap(async (_req, res) => {
       ],
     },
     matching: { weights: MATCH_WEIGHTS, maxScore: 100 },
+    evaluationEngine: {
+      algorithmVersion: DEFAULT_EVALUATION_CONFIG.algorithmVersion,
+      minimumEvidenceConfidence: DEFAULT_EVALUATION_CONFIG.minimumEvidenceConfidence,
+      minimumScaleRecommendationScore: DEFAULT_EVALUATION_CONFIG.minimumScaleRecommendationScore,
+      manualReviewRiskThreshold: DEFAULT_EVALUATION_CONFIG.manualReviewRiskThreshold,
+      weights: DEFAULT_EVALUATION_CONFIG.weights,
+      deterministic: true,
+      awardsContractsAutomatically: false,
+    },
+    // Retained for historical records submitted with the previous 70/30 rubric.
     evaluation: { bucketCap: BUCKET_CAP, qualifyingTechnical: QUALIFYING_TECHNICAL, criteria: all('SELECT * FROM evaluation_criteria ORDER BY bucket DESC, id') },
   });
 }));

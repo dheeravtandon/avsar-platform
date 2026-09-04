@@ -55,7 +55,7 @@ const MAP = {
   VERIFIED: ['success', 'Verified'],
 
   // Evaluation
-  ASSIGNED: ['warning', 'Awaiting score'],
+  ASSIGNED: ['warning', 'Awaiting evaluation'],
   RECOMMEND: ['success', 'Recommended'],
   RECOMMEND_WITH_CONDITIONS: ['warning', 'Recommended with conditions'],
   NOT_RECOMMEND: ['danger', 'Not recommended'],

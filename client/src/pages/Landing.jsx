@@ -234,7 +234,7 @@ export default function Landing() {
           <h2 className="section__title">See it end to end</h2>
           <p className="section__lede" style={{ margin: '0 auto var(--s-6)' }}>
             The demonstration database carries a full lifecycle: a non-revenue water problem statement
-            published by a state water board, four applications, a scored committee evaluation, a
+            published by a state water board, four applications, an explainable automated evaluation, a
             six-month pilot with monthly KPI readings, a rate contract, and two other departments
             drawing down against it.
           </p>
@@ -272,7 +272,7 @@ function Audience({ title, lede, points, cta }) {
 
 const STAGE_DETAIL = {
   ASSESS: ['Outcome, baseline and KPIs', 'Pilot budget ceiling declared', 'Department head approves to publish'],
-  VALIDATE: ['Automatic statutory eligibility gate', 'Blind two-envelope scoring, 70 / 30', 'Score dispersion above 20 forces reconciliation'],
+  VALIDATE: ['Automatic statutory eligibility gate', 'Blind, versioned evidence evaluation', 'Risk flags and limitations recorded'],
   SANDBOX: ['Sanction order and DPDP agreement', 'Milestone-linked payment release', 'Monthly KPI readings against target'],
   ADOPT: ['Verdict recorded against declared KPIs', 'Mode chosen under a named GFR rule', 'Purchase order and PFMS reference'],
   RAMPUP: ['Two-year rate contract', 'Listed on the Proven Solutions Registry', 'Any department draws down without re-tendering'],

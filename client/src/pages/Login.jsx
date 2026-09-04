@@ -66,7 +66,7 @@ export default function Login() {
         <h2>One workspace for the department, the evaluator and the startup.</h2>
         <p className="mt-4" style={{ color: 'var(--brand-300)', maxWidth: '46ch' }}>
           Everything you can see and do is decided by your role. A nodal officer drafts problem
-          statements; a department head approves them; an evaluator scores blind; a startup applies
+          statements; a department head approves them; an evaluator runs a blind evidence evaluation; a startup applies
           and runs a pilot; a procurement officer awards. Nobody sees a control they cannot use.
         </p>
         <div className="mt-8 small" style={{ color: 'var(--brand-300)' }}>
