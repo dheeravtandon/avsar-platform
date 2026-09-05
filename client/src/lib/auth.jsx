@@ -24,6 +24,16 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { refresh(); }, [refresh]);
 
+  // Any request anywhere in the app can discover the token is no longer valid
+  // (expired, or - on this demo's ephemeral database - pointing at a user that
+  // no longer exists after a cold start). Clearing user here lets the existing
+  // route guard redirect to /login on the next render, in place, no reload.
+  useEffect(() => {
+    const onUnauthorized = () => setUser(null);
+    window.addEventListener('avsar:unauthorized', onUnauthorized);
+    return () => window.removeEventListener('avsar:unauthorized', onUnauthorized);
+  }, []);
+
   const login = useCallback(async (email, password) => {
     const res = await api.post(endpoints.login(), { email, password });
     token.set(res.token);

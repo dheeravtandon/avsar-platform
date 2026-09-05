@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../lib/auth.jsx';
 import { useDocumentTitle } from '../lib/hooks.js';
@@ -29,6 +29,11 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
+  // The flag is read here (a plain, repeatable read - safe if React StrictMode
+  // double-invokes this initialiser) and cleared separately in an effect below,
+  // rather than read-and-cleared in one step, which a double-invoke would corrupt.
+  const [expired] = useState(() => Boolean(params.get('expired')) || Boolean(sessionStorage.getItem('avsar.sessionExpired')));
+  useEffect(() => { sessionStorage.removeItem('avsar.sessionExpired'); }, []);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -85,7 +90,7 @@ export default function Login() {
             Use a demo role below, or your own credentials if you registered a startup.
           </p>
 
-          {params.get('expired') && (
+          {expired && (
             <div className="mb-4"><Notice tone="warning">Your session expired. Please sign in again.</Notice></div>
           )}
           {error && <div className="mb-4"><Notice tone="danger">{error}</Notice></div>}

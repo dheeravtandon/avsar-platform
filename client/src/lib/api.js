@@ -47,8 +47,12 @@ async function request(path, { method = 'GET', body, signal } = {}) {
   const payload = await res.json().catch(() => ({}));
   if (!res.ok) {
     if (res.status === 401 && token.get()) {
+      // A stale or now-invalid token: clear it and let the app react in place.
+      // Dispatched rather than a hard location.assign, so the SPA's own route
+      // guard redirects instantly without a full reload racing this response.
       token.clear();
-      if (!location.pathname.startsWith('/login')) location.assign('/login?expired=1');
+      sessionStorage.setItem('avsar.sessionExpired', '1');
+      window.dispatchEvent(new Event('avsar:unauthorized'));
     }
     throw new ApiError(payload.error || `Request failed (${res.status})`, res.status, payload.fields);
   }
