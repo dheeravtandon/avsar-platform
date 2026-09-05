@@ -21,12 +21,16 @@ export default function Register() {
   const [verdict, setVerdict] = useState(null);
 
   const [f, setF] = useState({
-    legalName: '', brandName: '', entityType: 'PRIVATE_LIMITED', cin: '', gstin: '', udyamNumber: '',
-    incorporationDate: '', city: '', state: '', employees: 5, womenLed: false,
-    dpiitNumber: '', dpiitValidTill: '2030-12-31', turnoverLastFy: 0,
+    legalName: 'Sahayak Vision Labs Private Limited', brandName: 'Sahayak',
+    entityType: 'PRIVATE_LIMITED', cin: 'U72900KA2021PTC205577', gstin: '29AABCS4417Q1Z8',
+    udyamNumber: 'UDYAM-KA-03-0058214',
+    incorporationDate: '2021-04-12', city: 'Bengaluru', state: 'Karnataka', employees: 18, womenLed: false,
+    dpiitNumber: 'DIPP172845', dpiitValidTill: '2030-12-31', turnoverLastFy: 4500000,
     isSplitReconstruction: false, hasPriorGovtOrder: false,
-    sector: '', subSector: '', trl: 5, capabilities: [], website: '',
-    name: '', email: '', phone: '', password: '', confirm: '',
+    sector: 'Governance & GovTech', subSector: 'Public service form digitisation', trl: 6,
+    capabilities: ['computer-vision', 'nlp', 'data-analytics'], website: 'https://sahayak.tech',
+    name: 'Ananya Rao', email: 'founder@sahayak.in', phone: '+91 98450 12345',
+    password: 'Avsar@2026', confirm: 'Avsar@2026',
   });
 
   const set = (k) => (v) => setF((prev) => ({ ...prev, [k]: v }));
