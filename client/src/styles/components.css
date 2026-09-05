@@ -741,13 +741,13 @@ table.data .code {
 .masthead__name { display: block; font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; color: var(--brand-900); line-height: 1.05; }
 .masthead__sub { display: block; font-size: var(--text-2xs); color: var(--ink-500); letter-spacing: 0.05em; text-transform: uppercase; }
 .masthead__nav { display: flex; gap: var(--s-1); margin-left: auto; align-items: center; }
-.masthead__nav a {
+.masthead__nav a:not(.btn) {
   padding: var(--s-2) var(--s-3);
   color: var(--ink-700);
   font-size: var(--text-base);
   border-radius: var(--r-sm);
 }
-.masthead__nav a:hover { background: var(--ink-100); text-decoration: none; }
+.masthead__nav a:not(.btn):hover { background: var(--ink-100); text-decoration: none; }
 .masthead__nav a.on { color: var(--brand-800); font-weight: 500; }
 
 .hero {
